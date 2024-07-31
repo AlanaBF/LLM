@@ -48,39 +48,82 @@ def serve_react_app():
     return send_from_directory(app.static_folder, 'index.html')
 
 # Serve API endpoint
+# @app.route('/chatbot', methods=['POST'])
+# def handle_prompt():
+#     try:
+#         # Get the input prompt from the request
+#         data = request.get_json()
+#         input_text = data['prompt']
+#         print(f"Received prompt: {input_text}")  # Debugging statement
+        
+#         # Encode the input and generate the output
+#         input_ids = tokenizer(input_text, return_tensors="pt").input_ids
+#         print(f"Input IDs: {input_ids}")  # Debugging statement
+        
+#         outputs = model.generate(
+#             input_ids,
+#             max_new_tokens=250,  
+#             num_beams=5,        
+#             early_stopping=True
+#         )
+
+#         # Log raw outputs
+#         print(f"Raw outputs: {outputs}")  # Debugging statement
+        
+#         # Decode and return the response
+#         response = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
+#         print(f"Generated response: {response}")  # Debugging statement
+        
+#         return jsonify({"response": response})
+    
+#     except Exception as e:
+#         # Handle errors
+#         print(f"Error: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
+
 @app.route('/chatbot', methods=['POST'])
 def handle_prompt():
     try:
-        # Get the input prompt from the request
+        # Get the input prompt and language from the request
         data = request.get_json()
         input_text = data['prompt']
-        print(f"Received prompt: {input_text}")  # Debugging statement
-        
+        target_language = data.get('language', 'de')  # Default to German if no language provided
+
+        # Create the translation prompt, ensuring the language is correctly specified
+        if target_language == 'de':
+            translation_prompt = f"translate English to German: {input_text}"
+        elif target_language == 'fr':
+            translation_prompt = f"translate English to French: {input_text}"
+        else:
+            return jsonify({"error": "Unsupported language"}), 400
+
+        print(f"Received prompt: {translation_prompt}")  # Debugging statement
+
         # Encode the input and generate the output
-        input_ids = tokenizer(input_text, return_tensors="pt").input_ids
+        input_ids = tokenizer(translation_prompt, return_tensors="pt").input_ids
         print(f"Input IDs: {input_ids}")  # Debugging statement
-        
+
         outputs = model.generate(
             input_ids,
-            max_new_tokens=250,  
-            num_beams=5,        
+            max_new_tokens=250,
+            num_beams=5,
             early_stopping=True
         )
 
         # Log raw outputs
         print(f"Raw outputs: {outputs}")  # Debugging statement
-        
+
         # Decode and return the response
         response = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
         print(f"Generated response: {response}")  # Debugging statement
-        
+
         return jsonify({"response": response})
-    
+
     except Exception as e:
         # Handle errors
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
+    
 # Serve static files (like JS, CSS, etc.)
 @app.route('/<path:path>', methods=['GET'])
 def serve_static_files(path):

@@ -1,39 +1,87 @@
-# LeTraducteur (the translator)
+# 🇬🇧 LeTraducteur 🇫🇷 DerÜbersetzer 🇩🇪
+
+## The EN ↔ FR | DE Bridge Translator
 
 This repository contains a Chatbot Translator application that leverages the `t5-large` model from Hugging Face for translating text from English to French. The app is built using Flask for the backend and serves a simple HTML/CSS frontend. Future iterations plan to upgrade the frontend using Vite with React and maintain a Python backend.
 
+Website: [Portfolio](https://alanabarrettfrew.com)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Table of Contents
+
+- [🇬🇧 LeTraducteur 🇫🇷 DerÜbersetzer 🇩🇪](#-letraducteur--derübersetzer-)
+  - [The EN ↔ FR | DE Bridge Translator](#the-en--fr--de-bridge-translator)
+  - [Table of Contents](#table-of-contents)
+  - [Technology Used](#technology-used)
+  - [Screenshots](#screenshots)
+  - [Folder Structure](#folder-structure)
+  - [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Setup](#setup)
+  - [Usage](#usage)
+    - [Current Features](#current-features)
+    - [Accessing the App](#accessing-the-app)
+  - [Model Quantization](#model-quantization)
+    - [Quantization Process](#quantization-process)
+    - [Dependencies](#dependencies)
+  - [License](#license)
+  - [Questions](#questions)
+
+## Technology Used
+
+The portfolio website is built using the following technologies:
+
+- ![HTML Badge](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+- ![CSS Badge](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+- ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+- ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+- ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+- ![Python](https://img.shields.io/badge/python-%2314354C.svg?style=for-the-badge&logo=python&logoColor=white)
+- ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white)
+- ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFC107?style=for-the-badge&logo=hugging-face&logoColor=black)
+
+## Screenshots
+
+![Home Page Blank](/backend/static/dist/assets/Screenshot1.png)
+
+![Home Page Example](/backend/static/dist/assets/Screenshot2.png)
+
 ## Folder Structure
 
-├── static
-
-│ ├── css
-
-│ │ └── style.css # CSS styles for the frontend
-
-│ └── images # Contains all static images used in the app
-
-├── templates
-
-│ └── index.html # The main HTML file served by Flask
-
-├── app.py # Flask backend serving the translation service
-
-├── Dockerfile # Docker configuration (not currently used)
-
-├── quantization.ipynb # Notebook for quantizing the t5-large model
-
-├── quantized_t5_large.pth # Quantized model state dictionary
-
-├── README.md # This README file
-
-├── requirements.txt # Python dependencies
-
+- **LLM/**: The root directory of the project.
+  - **backend/**: Contains backend-related files and directories.
+    - **static/**: Holds static files served by Flask.
+    - **dist/**: The directory containing the compiled frontend.
+      - **assets/**: Directory for static assets like images, etc.
+      - **index.html**: Main HTML file for the Flask server.
+    - **app.py**: The Flask backend application file.
+    - **quantization.ipynb**: Jupyter notebook for quantizing the T5 model.
+    - **quantized_t5_large.pth**: The quantized T5 model state dictionary.
+    - **requirements.txt**: Python dependencies required for the backend.
+  - **evaluation/**: Directory for evaluation-related content for testing the app.
+  - **frontend/**: Contains the React frontend project.
+    - **LeTraducteur/**: The root of the React project.
+      - **public/**: Contains public static files.
+        - **assets/**: Static assets for the React frontend.
+      - **src/**: Source files for the React application.
+        - **components/**: Contains individual React components.
+          - **Chatbot.tsx**: Component for the chatbot interface.
+          - **Footer.tsx**: Component for the footer.
+          - **Navbar.tsx**: Component for the navigation bar.
+        - **App.css**: CSS for styling the main app component.
+        - **App.tsx**: Main React component.
+        - **index.css**: Global CSS styles.
+        - **main.tsx**: Entry point for the React application.
+        - **index.html**: HTML template for the React application.
+- **LICENSE**: The license file for the project.
+- **README.md**: The README file with project documentation.
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.11
 - `pip` package manager
 
 ### Setup
@@ -55,6 +103,7 @@ This repository contains a Chatbot Translator application that leverages the `t5
 3. **Install dependencies**
 
         ```sh
+        cd backend
         pip install -r requirements.txt
         ```
 
@@ -95,30 +144,15 @@ This repository contains a Chatbot Translator application that leverages the `t5
 
 ### Current Features
 
-Translation: The app accepts English text input and translates it into French using a quantized t5-large model from Hugging Face.
+Translation: The app accepts English text input and translates it into French or German using a quantized t5-large model from Hugging Face.
 Frontend: A simple interface for interacting with the chatbot, allowing users to input text and view translated results.
 
 ### Accessing the App
 
-Open your web browser and go to http://127.0.0.1:5000.
-Interact with the chatbot by typing English text into the input field. Prompt: "Translate to French:'Insert text here'"
-The translated text in French will be displayed in the chat interface.
-
-### Future Development
-
-In the next iteration of this project, the following improvements will be made:
-
-#### Frontend
-
-Vite + React: The current HTML/CSS frontend will be replaced with a modern React-based frontend built with Vite for improved development experience and performance.
-
-#### Backend
-
-Python Flask API: The Flask backend will be restructured to serve the React frontend and handle API requests for translation.
-
-#### Docker Support
-
-Dockerize the App: The Dockerfile will be updated to support containerization of both the frontend and backend, making the app easier to deploy across different environments.
+1. Open your web browser and navigate to [the local app](http://127.0.0.1:5000).
+2. Select whether you want to translate to German or French.
+3. Interact with the chatbot by typing English text into the input field.
+4. The translated text in French or German will be displayed in the chat interface.
 
 ## Model Quantization
 
@@ -139,4 +173,13 @@ transformers: Hugging Face library for the T5 model.
 torch: PyTorch library, used for loading and running the model.
 
 ## License
+
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Questions
+
+Thank you for visiting my Translator App. I look forward to hearing from you. If you have any questions or need further assistance, please contact me:
+
+- Email: [alanabarrett-frew@hotmail.com](mailto:alanabarrett-frew@hotmail.com)
+- Website: [www.alanabarrettfrew.com](https://www.alanabarrettfrew.com)
+- Github: [AlanaBF](https://github.com/AlanaBF)
