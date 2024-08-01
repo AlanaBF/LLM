@@ -1,41 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chatbot</title>
+  <title>LeTraducteur</title>
   <meta name="author" content="A Barrett-Frew">
-  <!-- <link rel="stylesheet" href="css/style.css" /> -->
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-  <!-- <link rel="shortcut icon" href='favicon.ico' type="image/x-icon">
-    <link rel="icon" href='favicon.ico' type="image/x-icon"> -->
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
   <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Permanent+Marker&display=swap"
+    rel="stylesheet">
 </head>
-<!--end general information-->
 
 <body>
-
-  <!-- <header>
-    <div class="color-block"></div>
-  </header> -->
-
   <!--Chatbot container-->
   <main>
     <div class="chatbot">
       <div class="chat-header">
-        <h1>LLM Chatbot</h1>
+        <h1>LeTraducteur</h1>
+        <h5>The Translator</h5>
       </div>
 
       <div class="spacer" id="messages-container"></div>
-
-      <form class="chat-form" id="message-form">
-        <textarea type="text" id="message-input" placeholder="Send a message..."></textarea>
-        <button type="submit">➤</button>
-      </form>
     </div>
   </main>
   <!--end chatbot container-->
+
+  <!-- Moved the form here -->
+  <form class="chat-form" id="message-form">
+    <textarea type="text" id="message-input" placeholder="Send a message..."></textarea>
+    <button type="submit">➤</button>
+  </form>
+
+  <footer class="footer">
+    Made with &hearts; by Alana Barrett-Frew &copy; 2024
+    <a href="https://github.com/AlanaBF/LLM" target="_blank">Github </a>
+    <a href="https://www.alanabarrettfrew.com/" target="_blank"> Portfolio Website</a>
+  </footer>
 
   <!--Javascript to call the language model-->
   <script src="{{ url_for('static', filename='script.js') }}"></script>

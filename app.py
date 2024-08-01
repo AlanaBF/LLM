@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import torch
+import platform
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -25,8 +26,15 @@ try:
 except Exception as e:
     print(f"Error loading quantized model state dictionary: {e}")
 
-# Set the quantization backend
-torch.backends.quantized.engine = 'qnnpack'
+# Set the quantization backend based on the platform
+current_platform = platform.system()
+
+if current_platform == 'Darwin':  # macOS
+    torch.backends.quantized.engine = 'qnnpack'
+elif current_platform == 'Windows':  # Windows
+    torch.backends.quantized.engine = 'fbgemm'
+else:
+    print("Unsupported platform for quantization engine")
 
 # Apply dynamic quantization to the model
 print("Applying dynamic quantization...")
@@ -55,14 +63,12 @@ def handle_prompt():
         print(f"Input IDs: {input_ids}")  # Debugging statement
         
         outputs = model.generate(
-                input_ids,
-                max_new_tokens=50,
-                num_beams=5,
-                temperature=0.7,    # You can experiment with different values
-                top_p=0.9,          # Adjust as needed
-                early_stopping=True
+            input_ids,
+            max_new_tokens=250,  # Adjust as needed
+            num_beams=5,         # Beam search for deterministic generation
+            early_stopping=True
         )
-        
+
         # Log raw outputs
         print(f"Raw outputs: {outputs}")  # Debugging statement
         
@@ -79,3 +85,4 @@ def handle_prompt():
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
+

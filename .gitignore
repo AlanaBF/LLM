@@ -2,3 +2,5 @@
 venv
 .DS_Store
 quantization/
+quantized_t5_large.pth
+.venv/
