@@ -1,11 +1,12 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import torch
 import platform
+import os
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static/dist', static_url_path='')
 CORS(app)
 
 # Load the quantized model and tokenizer
@@ -46,10 +47,12 @@ try:
 except Exception as e:
     print(f"Error during quantization: {e}")
 
+# Serve React App
 @app.route('/', methods=['GET'])
-def home():
-    return render_template('index.html')
+def serve_react_app():
+    return send_from_directory(app.static_folder, 'index.html')
 
+# Serve API endpoint
 @app.route('/chatbot', methods=['POST'])
 def handle_prompt():
     try:
@@ -83,6 +86,14 @@ def handle_prompt():
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+# Serve static files (like JS, CSS, etc.)
+@app.route('/<path:path>', methods=['GET'])
+def serve_static_files(path):
+    # This serves static files, including index.html for any unmatched routes
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
-
