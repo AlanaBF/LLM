@@ -64,8 +64,8 @@ def handle_prompt():
         
         outputs = model.generate(
             input_ids,
-            max_new_tokens=250,  # Adjust as needed
-            num_beams=5,         # Beam search for deterministic generation
+            max_new_tokens=250,  
+            num_beams=5,        
             early_stopping=True
         )
 
