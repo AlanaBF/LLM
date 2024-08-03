@@ -2,7 +2,7 @@
 
 ## The EN ↔ FR | DE Bridge Translator
 
-This repository contains a Chatbot Translator application that leverages the `t5-large` model from Hugging Face for translating text from English to French. The app is built using Flask for the backend and serves a Vite React Typescript frontend with Tailwind CSS.
+This repository contains a Chatbot Translator application that leverages the `t5-large` model from Hugging Face for translating text from English to French and German. The app is built using Flask for the backend and serves a Vite React Typescript frontend with Tailwind CSS.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
