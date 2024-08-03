@@ -86,57 +86,57 @@ The portfolio website is built using the following technologies:
 
 1. **Clone the repository**
 
-        ```sh
-        git clone https://github.com/AlanaBF/LLM
-        cd LLM
-        ```
+      ```sh
+      git clone https://github.com/AlanaBF/LLM
+      cd LLM
+      ```
 
 2. **Create and activate a virtual environment**
 
-        ```sh
-        python3 -m venv venv
-        source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-        ```
+    ```sh
+    python3 -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
 
 3. **Install dependencies**
 
-        ```sh
-        cd backend
-        pip install -r requirements.txt
-        ```
+    ```sh
+    cd backend
+    pip install -r requirements.txt
+    ```
 
 4. **Generate the Quantized Model**
 
-        Note: The quantized model file (quantized_t5_large.pth) is not included in the repository due to its size. You will need to generate it by running the provided Jupyter notebook.
+    Note: The quantized model file (quantized_t5_large.pth) is not included in the repository due to its size. You will need to generate it by running the provided Jupyter notebook.
 
-        #### Steps to Generate the Model:
+    #### Steps to Generate the Model:
 
-        ##### Open the Jupyter Notebook:
+    ##### Open the Jupyter Notebook:
 
-        Navigate to the root of the cloned repository and open the quantization.ipynb notebook using Jupyter:
+    Navigate to the root of the cloned repository and open the quantization.ipynb notebook using Jupyter:
 
-        ```sh
-        jupyter notebook quantization.ipynb
-        ```
+    ```sh
+    jupyter notebook quantization.ipynb
+    ```
 
-        ##### Run the Notebook:
+    ##### Run the Notebook:
 
-        Execute the cells in the notebook. This will:
-        - Load the t5-large model.
-        - Apply dynamic quantization to the model.
-        - Save the quantized model as quantized_t5_large.pth in the appropriate directory.
-        Verify the Model:
-        - Ensure that the quantized_t5_large.pth file is created successfully.
+    Execute the cells in the notebook. This will:
+    - Load the t5-large model.
+    - Apply dynamic quantization to the model.
+    - Save the quantized model as quantized_t5_large.pth in the appropriate directory.
+    Verify the Model:
+    - Ensure that the quantized_t5_large.pth file is created successfully.
 
 5. **Set Up and Run the Flask App**
 
-        With the quantized model in place, you can now run the Flask application.
+    With the quantized model in place, you can now run the Flask application.
 
-        ```sh
-        python app.py
-        ```
+    ```sh
+    python app.py
+    ```
 
-        The app should now be running on http://127.0.0.1:5000.
+    The app should now be running on http://127.0.0.1:5000.
 
 ## Usage
 
