@@ -47,40 +47,6 @@ except Exception as e:
 def serve_react_app():
     return send_from_directory(app.static_folder, 'index.html')
 
-# Serve API endpoint
-# @app.route('/chatbot', methods=['POST'])
-# def handle_prompt():
-#     try:
-#         # Get the input prompt from the request
-#         data = request.get_json()
-#         input_text = data['prompt']
-#         print(f"Received prompt: {input_text}")  # Debugging statement
-        
-#         # Encode the input and generate the output
-#         input_ids = tokenizer(input_text, return_tensors="pt").input_ids
-#         print(f"Input IDs: {input_ids}")  # Debugging statement
-        
-#         outputs = model.generate(
-#             input_ids,
-#             max_new_tokens=250,  
-#             num_beams=5,        
-#             early_stopping=True
-#         )
-
-#         # Log raw outputs
-#         print(f"Raw outputs: {outputs}")  # Debugging statement
-        
-#         # Decode and return the response
-#         response = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
-#         print(f"Generated response: {response}")  # Debugging statement
-        
-#         return jsonify({"response": response})
-    
-#     except Exception as e:
-#         # Handle errors
-#         print(f"Error: {str(e)}")
-#         return jsonify({"error": str(e)}), 500
-
 @app.route('/chatbot', methods=['POST'])
 def handle_prompt():
     try:
