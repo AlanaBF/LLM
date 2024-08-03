@@ -2,9 +2,7 @@
 
 ## The EN ↔ FR | DE Bridge Translator
 
-This repository contains a Chatbot Translator application that leverages the `t5-large` model from Hugging Face for translating text from English to French. The app is built using Flask for the backend and serves a simple HTML/CSS frontend. Future iterations plan to upgrade the frontend using Vite with React and maintain a Python backend.
-
-Website: [Portfolio](https://alanabarrettfrew.com)
+This repository contains a Chatbot Translator application that leverages the `t5-large` model from Hugging Face for translating text from English to French. The app is built using Flask for the backend and serves a Vite React Typescript frontend with Tailwind CSS.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -32,10 +30,10 @@ Website: [Portfolio](https://alanabarrettfrew.com)
 
 The portfolio website is built using the following technologies:
 
+- ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+- ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 - ![HTML Badge](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 - ![CSS Badge](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-- ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-- ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 - ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 - ![Python](https://img.shields.io/badge/python-%2314354C.svg?style=for-the-badge&logo=python&logoColor=white)
 - ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white)
