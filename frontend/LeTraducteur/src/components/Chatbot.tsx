@@ -12,7 +12,7 @@ const Chatbot: React.FC = () => {
       const messageElement = document.createElement('div');
       const textElement = document.createElement('p');
       const imgElement = document.createElement('img');
-      
+
       imgElement.src = imgSrc;
 
       if (role === 'user') {
@@ -57,9 +57,12 @@ const Chatbot: React.FC = () => {
         messagesContainer.appendChild(loadingElement);
         messagesContainer.appendChild(loadingTextElement);
       }
-
+      // For flask serving on 5000
       const url = 'http://127.0.0.1:5000/chatbot';
       const requestBody = { prompt: message, language: language }; // Include selected language
+
+      // const url = 'http://127.0.0.1:7860/chatbot';  // Updated to use port 7860
+      // const requestBody = { prompt: message, language: language }; // Include selected language
 
       try {
         const response = await fetch(url, {
@@ -108,16 +111,16 @@ const Chatbot: React.FC = () => {
 
   return (
     <div className="relative flex flex-col bg-[#2cd0fa]">
-      <div className="absolute inset-0 bg-cover bg-center opacity-50 md:opacity-70" 
-           style={{ backgroundImage: 'url(/assets/backgroundimage.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat' }}></div>
-  
+      <div className="absolute inset-0 bg-cover bg-center opacity-50 md:opacity-70"
+        style={{ backgroundImage: 'url(/assets/backgroundimage.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat' }}></div>
+
       <div className="relative flex flex-col min-h-80vh bg-transparent">
         <div className="flex items-center justify-center p-4">
           <label htmlFor="language-select" className="mr-2 text-white">Translate to:</label>
-          <select 
-            id="language-select" 
+          <select
+            id="language-select"
             className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy bg-white text-navy font-dosis"
-            value={language} 
+            value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
             <option value="de">German</option>
@@ -129,13 +132,13 @@ const Chatbot: React.FC = () => {
           {/* Messages will be appended here */}
         </div>
         <form id="message-form" className="flex items-center justify-center p-4 bg-navy rounded-lg shadow-md w-10/12 mx-auto mb-4">
-          <textarea 
-            id="message-input" 
-            placeholder="Send a message..." 
+          <textarea
+            id="message-input"
+            placeholder="Send a message..."
             className="flex-grow p-2 mr-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-navy bg-white text-navy font-dosis"
           ></textarea>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="px-4 py-2 bg-[#2cd0fa] text-white rounded-lg hover:bg-[#2cd0fa] focus:outline-none focus:ring-2 focus:ring-[#2cd0fa]"
           >
             ➤

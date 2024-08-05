@@ -3,7 +3,15 @@ from flask_cors import CORS
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import torch
 import platform
+from dotenv import load_dotenv
 import os
+
+load_dotenv()  # Load environment variables from .env file
+
+# Ensure the token is being loaded
+token = os.getenv("HF_AUTH_TOKEN")
+if not token:
+    raise ValueError("Hugging Face token is not set in the environment.")
 
 # Initialize Flask app
 app = Flask(__name__, static_folder='static/dist', static_url_path='')
@@ -18,29 +26,25 @@ elif current_platform == 'Windows':  # Windows
 else:
     print("Unsupported platform for quantization engine")
 
-# Load the quantized model and tokenizer
-model_dir = "t5-large"  # Use the original model directory for tokenizer
-quantized_model_path = "quantized_t5_large.pth"  # Path to the quantized model state dictionary
+# Define model and tokenizer paths
+model_name = "AlanaBF/abf_quantized_t5_large"  # Model on Hugging Face Hub
+tokenizer_name = "t5-large"  # Use the original tokenizer path
 
+# Load the tokenizer
 print("Loading the tokenizer...")
-tokenizer = T5Tokenizer.from_pretrained(model_dir)
-
-print("Loading the full precision model...")
-model = T5ForConditionalGeneration.from_pretrained(model_dir)
-
-# Apply dynamic quantization to the model
-print("Applying dynamic quantization...")
-model = torch.quantization.quantize_dynamic(
-    model, {torch.nn.Linear}, dtype=torch.qint8
-)
-
-print("Loading the quantized model state dictionary...")
 try:
-    quantized_state_dict = torch.load(quantized_model_path)
-    model.load_state_dict(quantized_state_dict)
-    print("Quantized model state dictionary loaded successfully.")
+    tokenizer = T5Tokenizer.from_pretrained(tokenizer_name, token=token)
 except Exception as e:
-    print(f"Error loading quantized model state dictionary: {e}")
+    print(f"Error loading tokenizer: {e}")
+    raise
+
+# Load the quantized model directly from Hugging Face
+print("Loading the quantized model...")
+try:
+    model = T5ForConditionalGeneration.from_pretrained(model_name, token=token)
+except Exception as e:
+    print(f"Error loading model: {e}")
+    raise
 
 # Serve React App
 @app.route('/', methods=['GET'])
@@ -100,4 +104,4 @@ def serve_static_files(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)

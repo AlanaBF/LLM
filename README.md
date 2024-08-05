@@ -38,6 +38,7 @@ The portfolio website is built using the following technologies:
 - ![Python](https://img.shields.io/badge/python-%2314354C.svg?style=for-the-badge&logo=python&logoColor=white)
 - ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white)
 - ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFC107?style=for-the-badge&logo=hugging-face&logoColor=black)
+- ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
 ## Screenshots
 
@@ -74,6 +75,7 @@ The portfolio website is built using the following technologies:
         - **index.html**: HTML template for the React application.
 - **LICENSE**: The license file for the project.
 - **README.md**: The README file with project documentation.
+- **Dockerfile**: To run the dockerfile
 
 ## Installation
 
@@ -94,7 +96,7 @@ The portfolio website is built using the following technologies:
 2. **Create and activate a virtual environment**
 
     ```sh
-    python3 -m venv venv
+    python3 -m venv venv # On Windows use `python -m venv venv`
     source venv/bin/activate  # On Windows use `venv\Scripts\activate`
     ```
 
