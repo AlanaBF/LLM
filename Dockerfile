@@ -16,10 +16,15 @@ COPY backend/ .
 # Expose the port that the app runs on
 EXPOSE 5000
 
+# Accept Hugging Face token as a build argument
+ARG HF_AUTH_TOKEN
+ENV HF_AUTH_TOKEN=${HF_AUTH_TOKEN}
+
 # Define environment variable
 ENV FLASK_APP=app.py
 
-# Run the Flask app
+# Install Gunicorn for serving the app
 RUN pip install gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
 
+# Run the Flask app
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
