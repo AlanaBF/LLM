@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main  # Change this to your default branch if different
+      - main  # Adjust to your default branch
 
 jobs:
   build:
@@ -24,8 +24,13 @@ jobs:
 
     - name: Build and push
       run: |
-        docker buildx build --platform linux/amd64 --push -t <dockerhub_username>/my-app:latest .
+        docker buildx build \
+          --platform linux/amd64 \
+          --build-arg HF_AUTH_TOKEN=${{ secrets.HF_AUTH_TOKEN }} \
+          -t alanabf/translator-app:latest \
+          --push .
 
     - name: Logout from Docker Hub
       run: docker logout
+
 
