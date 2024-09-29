@@ -14,18 +14,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ .
 
 # Expose the port that the app runs on
-EXPOSE 5000
+EXPOSE 8000
 
-# Accept Hugging Face token as a build argument
-ARG HF_AUTH_TOKEN
-ENV HF_AUTH_TOKEN=${HF_AUTH_TOKEN}
-
-# Define environment variable
+# Define environment variable for Flask
 ENV FLASK_APP=app.py
 
 # Install Gunicorn for serving the app
 RUN pip install gunicorn
 
 # Run the Flask app
-# CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
-CMD ["sh", "-c", "gunicorn -w 2 -b 0.0.0.0:${PORT:-8080} app:app"]
+CMD ["sh", "-c", "gunicorn -w 2 -b 0.0.0.0:${PORT:-8000} app:app"]

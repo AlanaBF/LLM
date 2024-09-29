@@ -33,7 +33,7 @@ tokenizer_name = "t5-large"  # Use the original tokenizer path
 # Load the tokenizer
 print("Loading the tokenizer...")
 try:
-    tokenizer = T5Tokenizer.from_pretrained(tokenizer_name, token=token)
+    tokenizer = T5Tokenizer.from_pretrained(tokenizer_name, use_auth_token=token)
 except Exception as e:
     print(f"Error loading tokenizer: {e}")
     raise
@@ -41,7 +41,7 @@ except Exception as e:
 # Load the quantized model directly from Hugging Face
 print("Loading the quantized model...")
 try:
-    model = T5ForConditionalGeneration.from_pretrained(model_name, token=token)
+    model = T5ForConditionalGeneration.from_pretrained(model_name, use_auth_token=token)
 except Exception as e:
     print(f"Error loading model: {e}")
     raise
@@ -103,8 +103,9 @@ def serve_static_files(path):
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=5000, debug=False)
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # Default to 8080 if PORT is not set
-    app.run(host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000, debug=False)
+# if __name__ == "__main__":
+#     port = int(os.environ.get("PORT", 8080))  # Default to 8080 if PORT is not set
+#     app.run(host="0.0.0.0", port=port)
+

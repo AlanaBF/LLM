@@ -58,7 +58,7 @@ const Chatbot: React.FC = () => {
         messagesContainer.appendChild(loadingTextElement);
       }
       // For flask serving on 5000
-      const url = 'http://127.0.0.1:5000/chatbot';
+      const url = 'http://127.0.0.1:8000/chatbot';
       const requestBody = { prompt: message, language: language }; // Include selected language
 
       // const url = 'http://127.0.0.1:7860/chatbot';  // Updated to use port 7860
