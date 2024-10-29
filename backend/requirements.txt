@@ -1,4 +1,4 @@
-Werkzeug==2.2.3
+Werkzeug==3.0.6
 sentencepiece
 huggingface-hub
 flask
