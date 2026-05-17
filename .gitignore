@@ -6,3 +6,5 @@ backend/quantized_t5_large.pth
 .venv/
 evaluation.md
 DS_Store
+backend/static/dist/
+node_modules/
