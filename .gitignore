@@ -8,3 +8,4 @@ evaluation.md
 DS_Store
 backend/static/dist/
 node_modules/
+.DS_Store

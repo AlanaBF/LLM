@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from transformers import MarianMTModel, MarianTokenizer
 from openai import OpenAI, RateLimitError, AuthenticationError, APIError
 from dotenv import load_dotenv
@@ -9,6 +11,25 @@ load_dotenv()
 
 app = Flask(__name__, static_folder='static/dist', static_url_path='')
 CORS(app)
+
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    storage_uri="memory://",
+)
+
+
+@app.after_request
+def set_security_headers(response):
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
+
+
+MAX_INPUT_LENGTH = 2000
+MAX_MESSAGES = 30
+MAX_TTS_LENGTH = 1000
 
 # --- Translation Models ---
 models = {}
@@ -89,12 +110,18 @@ DIFFICULTY_INSTRUCTIONS = {
 TTS_VOICES = {"fr": "nova", "de": "onyx", "es": "nova", "it": "alloy"}
 
 
+import re
+
+SECTION_TAGS = re.compile(r'\[/?(?:REPLY|TRANSLATION|CORRECTION|FEEDBACK)\]')
+
+
 def extract_section(content: str, section: str) -> str | None:
     """Extract text between [SECTION] and [/SECTION] tags. Returns None if not found."""
     start_tag = f"[{section}]"
     end_tag = f"[/{section}]"
     if start_tag in content and end_tag in content:
-        return content.split(start_tag)[1].split(end_tag)[0].strip()
+        text = content.split(start_tag)[1].split(end_tag)[0].strip()
+        return SECTION_TAGS.sub('', text).strip()
     return None
 
 
@@ -110,12 +137,12 @@ ROLE: {scenario_context}
 {difficulty_text}
 
 RULES:
-1. Always respond IN {lang_name.upper()} as your character. Stay in the scenario.
-2. If the user makes grammar, spelling, or vocabulary mistakes in their {lang_name}, identify them.
+1. Always respond IN {lang_name.upper()} as your character. Continue the conversation naturally — react to what the user said and move the scenario forward. Do NOT just repeat or correct their sentence.
+2. If the user makes grammar, spelling, or vocabulary mistakes, note them separately in CORRECTION.
 3. Format your response EXACTLY as follows:
 
 [REPLY]
-Your in-character response in {lang_name} here.
+Your in-character response in {lang_name} that continues the conversation forward. Ask a follow-up question or provide useful information.
 [/REPLY]
 [TRANSLATION]
 English translation of your reply above.
@@ -133,18 +160,26 @@ Brief feedback IN ENGLISH on how natural and appropriate the user's response was
 
 # --- Routes ---
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "ok"})
+
+
 @app.route('/', methods=['GET'])
 def serve_react_app():
     return send_from_directory(app.static_folder, 'index.html')
 
 
 @app.route('/chatbot', methods=['POST'])
+@limiter.limit("30 per minute")
 def handle_prompt():
     try:
         data = request.get_json()
-        input_text = data['prompt']
+        input_text = data.get('prompt', '')
         target_language = data.get('language', 'de')
 
+        if not input_text or len(input_text) > MAX_INPUT_LENGTH:
+            return jsonify({"error": "Input must be 1-2000 characters"}), 400
         if target_language not in models:
             return jsonify({"error": "Unsupported language"}), 400
 
@@ -168,6 +203,7 @@ def handle_prompt():
 
 
 @app.route('/conversation', methods=['POST'])
+@limiter.limit("10 per minute")
 def handle_conversation():
     try:
         data = request.get_json()
@@ -177,7 +213,9 @@ def handle_conversation():
         difficulty = data.get('difficulty', 'intermediate')
 
         if not openai_client:
-            return jsonify({"error": "OPENAI_API_KEY not configured. Add it to your .env file."}), 500
+            return jsonify({"error": "config_error", "message": "OPENAI_API_KEY not configured."}), 500
+        if len(messages) > MAX_MESSAGES:
+            return jsonify({"error": "Conversation too long. Please start a new one."}), 400
         if language not in LANGUAGE_NAMES:
             return jsonify({"error": "Unsupported language"}), 400
         if scenario not in SCENARIOS:
@@ -204,7 +242,7 @@ def handle_conversation():
 
         content = response.choices[0].message.content
 
-        reply = extract_section(content, "REPLY") or content
+        reply = extract_section(content, "REPLY") or SECTION_TAGS.sub('', content).strip()
         translation = extract_section(content, "TRANSLATION") or ""
         correction = extract_section(content, "CORRECTION") or ""
         feedback = extract_section(content, "FEEDBACK") or ""
@@ -230,17 +268,18 @@ def handle_conversation():
 
 
 @app.route('/speak', methods=['POST'])
+@limiter.limit("20 per minute")
 def handle_speak():
     try:
         if not openai_client:
             return jsonify({"error": "OPENAI_API_KEY not configured"}), 500
 
         data = request.get_json()
-        text = data.get('text', '')
+        text = data.get('text', '').strip()
         language = data.get('language', 'fr')
 
-        if not text:
-            return jsonify({"error": "No text provided"}), 400
+        if not text or len(text) > MAX_TTS_LENGTH:
+            return jsonify({"error": "Text must be 1-1000 characters"}), 400
 
         voice = TTS_VOICES.get(language, "nova")
 
