@@ -1,185 +1,152 @@
-# 🇬🇧 LeTraducteur 🇫🇷 DerÜbersetzer 🇩🇪
+---
+title: LeTraducteur
+emoji: 🌐
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
 
-## The EN ↔ FR | DE Bridge Translator
+# LeTraducteur 🌐
 
-This repository contains a Chatbot Translator application that leverages the `t5-large` model from Hugging Face for translating text from English to French and German. The app is built using Flask for the backend and serves a Vite React Typescript frontend with Tailwind CSS.
+## Translate & Learn — 🇫🇷 French | 🇩🇪 German | 🇪🇸 Spanish | 🇮🇹 Italian
+
+A full-stack language learning application that combines translation, phrase learning, and AI-powered conversation practice. Built with React, Flask, and OpenAI.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Table of Contents
+## Features
 
-- [🇬🇧 LeTraducteur 🇫🇷 DerÜbersetzer 🇩🇪](#-letraducteur--derübersetzer-)
-  - [The EN ↔ FR | DE Bridge Translator](#the-en--fr--de-bridge-translator)
-  - [Table of Contents](#table-of-contents)
-  - [Technology Used](#technology-used)
-  - [Screenshots](#screenshots)
-  - [Folder Structure](#folder-structure)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Setup](#setup)
-  - [Usage](#usage)
-    - [Current Features](#current-features)
-    - [Accessing the App](#accessing-the-app)
-  - [Model Quantization](#model-quantization)
-    - [Quantization Process](#quantization-process)
-    - [Dependencies](#dependencies)
-  - [License](#license)
-  - [Questions](#questions)
+### 🔄 Translate
+Instant English to French, German, Spanish, or Italian translation using Helsinki-NLP's Opus-MT models running locally.
 
-## Technology Used
+### 📖 Learn
+Key phrases for real-world scenarios — greetings, restaurant, directions, shopping, hotel, and emergencies. Each phrase includes:
+- Native pronunciation via OpenAI TTS
+- Hidden English translations (reveal on click)
+- Quiz mode with scoring
 
-The portfolio website is built using the following technologies:
+### 💬 Practice
+AI conversation practice powered by GPT-4o-mini:
+- 5 scenarios (Restaurant, Directions, Job Interview, Shopping, Hotel)
+- 3 difficulty levels (Beginner, Intermediate, Advanced)
+- Grammar corrections with explanations
+- Quality feedback on naturalness and fluency
+- English translation toggle on each message
+- Speech-to-text microphone input
+- Natural TTS pronunciation via OpenAI
 
-- ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-- ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-- ![HTML Badge](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-- ![CSS Badge](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-- ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-- ![Python](https://img.shields.io/badge/python-%2314354C.svg?style=for-the-badge&logo=python&logoColor=white)
-- ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white)
-- ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFC107?style=for-the-badge&logo=hugging-face&logoColor=black)
-- ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+## Tech Stack
 
-## Screenshots
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS |
+| Backend | Flask, Gunicorn |
+| Translation | Helsinki-NLP/opus-mt (local models) |
+| Conversation | OpenAI GPT-4o-mini |
+| Pronunciation | OpenAI TTS (tts-1) |
+| Deployment | Docker, Hugging Face Spaces |
 
-![Home Page Blank](/backend/static/dist/assets/Screenshot1.png)
-
-![Home Page Example](/backend/static/dist/assets/Screenshot2.png)
-
-## Folder Structure
-
-- **LLM/**: The root directory of the project.
-  - **backend/**: Contains backend-related files and directories.
-    - **static/**: Holds static files served by Flask.
-    - **dist/**: The directory containing the compiled frontend.
-      - **assets/**: Directory for static assets like images, etc.
-      - **index.html**: Main HTML file for the Flask server.
-    - **app.py**: The Flask backend application file.
-    - **quantization.ipynb**: Jupyter notebook for quantizing the T5 model.
-    - **quantized_t5_large.pth**: The quantized T5 model state dictionary.
-    - **requirements.txt**: Python dependencies required for the backend.
-  - **evaluation/**: Directory for evaluation-related content for testing the app.
-  - **frontend/**: Contains the React frontend project.
-    - **LeTraducteur/**: The root of the React project.
-      - **public/**: Contains public static files.
-        - **assets/**: Static assets for the React frontend.
-      - **src/**: Source files for the React application.
-        - **components/**: Contains individual React components.
-          - **Chatbot.tsx**: Component for the chatbot interface.
-          - **Footer.tsx**: Component for the footer.
-          - **Navbar.tsx**: Component for the navigation bar.
-        - **App.css**: CSS for styling the main app component.
-        - **App.tsx**: Main React component.
-        - **index.css**: Global CSS styles.
-        - **main.tsx**: Entry point for the React application.
-        - **index.html**: HTML template for the React application.
-- **LICENSE**: The license file for the project.
-- **README.md**: The README file with project documentation.
-- **Dockerfile**: To run the dockerfile
-
-## Installation
+## Getting Started
 
 ### Prerequisites
 
-- Python 3.11
-- `pip` package manager
+- Python 3.11+
+- Node.js 20+
+- An OpenAI API key (for Practice and TTS features)
 
 ### Setup
 
-1. **Clone the repository**
+```bash
+git clone https://github.com/AlanaBF/LLM
+cd LLM
+```
 
-      ```sh
-      git clone https://github.com/AlanaBF/LLM
-      cd LLM
-      ```
+**Backend:**
 
-2. **Create and activate a virtual environment**
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-    ```sh
-    python3 -m venv venv # On Windows use `python -m venv venv`
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
+Create a `.env` file in the `backend/` directory:
 
-3. **Install dependencies**
+```
+OPENAI_API_KEY=sk-your-key-here
+```
 
-    ```sh
-    cd backend
-    pip install -r requirements.txt
-    ```
+**Frontend:**
 
-4. **Generate the Quantized Model**
+```bash
+cd frontend/LeTraducteur
+npm install
+```
 
-    Note: The quantized model file (quantized_t5_large.pth) is not included in the repository due to its size. You will need to generate it by running the provided Jupyter notebook.
+### Running Locally
 
-    #### Steps to Generate the Model:
+Start both servers:
 
-    ##### Open the Jupyter Notebook:
+```bash
+# Terminal 1: Backend (port 7860)
+cd backend && source venv/bin/activate && python app.py
 
-    Navigate to the root of the cloned repository and open the quantization.ipynb notebook using Jupyter:
+# Terminal 2: Frontend (port 5173)
+cd frontend/LeTraducteur && npx vite
+```
 
-    ```sh
-    jupyter notebook quantization.ipynb
-    ```
+Open http://localhost:5173
 
-    ##### Run the Notebook:
+### Docker
 
-    Execute the cells in the notebook. This will:
-    - Load the t5-large model.
-    - Apply dynamic quantization to the model.
-    - Save the quantized model as quantized_t5_large.pth in the appropriate directory.
-    Verify the Model:
-    - Ensure that the quantized_t5_large.pth file is created successfully.
+```bash
+docker build -t letraducteur .
+docker run -e OPENAI_API_KEY=sk-your-key -p 7860:7860 letraducteur
+```
 
-5. **Set Up and Run the Flask App**
+## Deployment
 
-    With the quantized model in place, you can now run the Flask application.
+Deployed on [Hugging Face Spaces](https://huggingface.co/spaces/AlanaBF/LeTraducteur) using Docker.
 
-    ```sh
-    python app.py
-    ```
+To deploy your own:
+1. Create a Docker Space on Hugging Face
+2. Add `OPENAI_API_KEY` as a Space secret
+3. Push the code — it builds automatically
 
-    The app should now be running on http://127.0.0.1:5000.
+## Architecture
 
-## Usage
+```
+frontend/LeTraducteur/src/
+├── constants.ts          # Shared language config
+├── App.tsx               # Router (Translate | Learn | Practice)
+└── components/
+    ├── Navbar.tsx         # Navigation with active tab indicators
+    ├── Chatbot.tsx        # Translation interface
+    ├── Learn.tsx          # Phrase learning + quiz mode
+    ├── Practice.tsx       # AI conversation practice
+    └── Footer.tsx         # Links and credits
 
-### Current Features
+backend/
+├── app.py                # Flask API (translation, conversation, TTS)
+└── requirements.txt      # Python dependencies
+```
 
-Translation: The app accepts English text input and translates it into French or German using a quantized t5-large model from Hugging Face.
-Frontend: A simple interface for interacting with the chatbot, allowing users to input text and view translated results.
+## API Endpoints
 
-### Accessing the App
-
-1. Open your web browser and navigate to [the local app](http://127.0.0.1:5000).
-2. Select whether you want to translate to German or French.
-3. Interact with the chatbot by typing English text into the input field.
-4. The translated text in French or German will be displayed in the chat interface.
-
-## Model Quantization
-
-The quantization.ipynb notebook demonstrates how the t5-large model was quantized to reduce its size and improve inference speed. The quantized model is saved as quantized_t5_large.pth and loaded in app.py.
-
-### Quantization Process
-
-Load the t5-large model from Hugging Face.
-Apply dynamic quantization to reduce the model's size and improve performance.
-Save the quantized model to quantized_t5_large.pth.
-
-### Dependencies
-
-All dependencies are listed in requirements.txt. Key dependencies include:
-
-Flask: Web framework used for serving the app.
-transformers: Hugging Face library for the T5 model.
-torch: PyTorch library, used for loading and running the model.
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/chatbot` | POST | Translate English text to target language |
+| `/conversation` | POST | AI conversation with corrections and feedback |
+| `/speak` | POST | Text-to-speech audio generation |
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT — see [LICENSE](LICENSE) for details.
 
-## Questions
+## Author
 
-Thank you for visiting my Translator App. I look forward to hearing from you. If you have any questions or need further assistance, please contact me:
-
-- Email: [alanabarrett-frew@hotmail.com](mailto:alanabarrett-frew@hotmail.com)
-- Website: [www.alanabarrettfrew.com](https://www.alanabarrettfrew.com)
-- Github: [AlanaBF](https://github.com/AlanaBF)
+**Alana Barrett-Frew**
+- Website: [alanabarrettfrew.com](https://www.alanabarrettfrew.com)
+- GitHub: [AlanaBF](https://github.com/AlanaBF)

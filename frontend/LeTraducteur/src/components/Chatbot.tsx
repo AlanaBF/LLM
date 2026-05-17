@@ -1,145 +1,133 @@
-import { useEffect, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { LANGUAGES, LangCode } from '../constants';
+
+interface Translation {
+  id: string;
+  input: string;
+  output: string;
+}
 
 const Chatbot: React.FC = () => {
-  const [language, setLanguage] = useState('de'); // Default to German ('de')
+  const [language, setLanguage] = useState<LangCode>('de');
+  const [input, setInput] = useState('');
+  const [translations, setTranslations] = useState<Translation[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const messagesContainer = document.getElementById('messages-container') as HTMLElement | null;
-    const messageForm = document.getElementById('message-form') as HTMLFormElement | null;
-    const messageInput = document.getElementById('message-input') as HTMLTextAreaElement | null;
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [translations]);
 
-    const addMessage = (message: string, role: string, imgSrc: string): void => {
-      const messageElement = document.createElement('div');
-      const textElement = document.createElement('p');
-      const imgElement = document.createElement('img');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
 
-      imgElement.src = imgSrc;
+    const message = input.trim();
+    setInput('');
+    setIsLoading(true);
 
-      if (role === 'user') {
-        messageElement.className = 'message user';
-        imgElement.className = "float-right mx-2 max-w-40 top-0 left-0 w-12 h-12 rounded-full";
-        textElement.className = "max-w-7/10 bg-white text-navy float-right text-left p-2 rounded-2xl mt-4";
-      } else if (role === 'aibot' || role === 'error') {
-        messageElement.className = `message ${role}`;
-        imgElement.className = "float-left mx-2 max-w-40 top-0 left-0 w-12 h-12 opacity-0 transform translate-y-full animate-fade-in-bottom";
-        textElement.className = "max-w-7/10 bg-white text-navy float-left text-left p-2 rounded-2xl mt-4 opacity-0 transform translate-y-full animate-fade-in-bottom";
-        if (role === 'error') {
-          textElement.className = textElement.className.replace('text-navy', 'text-gray-800');
-        }
-      }
+    try {
+      const response = await fetch('/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: message, language }),
+      });
 
-      messageElement.appendChild(imgElement);
-      textElement.innerText = message;
-      messageElement.appendChild(textElement);
+      const data = await response.json();
 
-      if (messagesContainer) {
-        messagesContainer.appendChild(messageElement);
-        const clearDiv = document.createElement('div');
-        clearDiv.style.clear = 'both';
-        messagesContainer.appendChild(clearDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight; // Auto-scroll to the latest message
-      }
-    };
-
-    const sendMessage = async (message: string): Promise<void> => {
-      addMessage(message, 'user', '/assets/britishlogo.png');
-
-      // Loading spinner
-      const loadingElement = document.createElement('div');
-      loadingElement.className = "float-left mx-2 w-12 h-12 rounded-full border-t-2 border-navy animate-spin";
-
-      // Loading text
-      const loadingTextElement = document.createElement('p');
-      loadingTextElement.className = "mb-2 p-2 rounded-lg bg-navy text-white border border-navy float-left text-left animate-fade-in-bottom";
-      loadingTextElement.innerText = 'Loading....Please wait';
-
-      if (messagesContainer) {
-        messagesContainer.appendChild(loadingElement);
-        messagesContainer.appendChild(loadingTextElement);
-      }
-      // For flask serving on 5000
-      const url = 'http://127.0.0.1:8000/chatbot';
-      const requestBody = { prompt: message, language: language }; // Include selected language
-
-      // const url = 'http://127.0.0.1:7860/chatbot';  // Updated to use port 7860
-      // const requestBody = { prompt: message, language: language }; // Include selected language
-
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody),
-        });
-
-        const data = await response.json();
-        const responseMessage = data['response'];
-
-        if (loadingElement.parentNode) loadingElement.parentNode.removeChild(loadingElement);
-        if (loadingTextElement.parentNode) loadingTextElement.parentNode.removeChild(loadingTextElement);
-
-        addMessage(responseMessage, 'aibot', '/assets/botlogo.png');
-      } catch (error) {
-        console.error('Error:', error);
-        if (loadingElement.parentNode) loadingElement.parentNode.removeChild(loadingElement);
-        if (loadingTextElement.parentNode) loadingTextElement.parentNode.removeChild(loadingTextElement);
-        addMessage('An error occurred. Please try again.', 'error', '/assets/Error.png');
-      }
-    };
-
-    const handleFormSubmit = async (event: Event) => {
-      event.preventDefault();
-      if (messageInput) {
-        const message = messageInput.value.trim();
-        if (message !== '') {
-          messageInput.value = '';
-          await sendMessage(message);
-        }
-      }
-    };
-
-    if (messageForm) {
-      messageForm.addEventListener('submit', handleFormSubmit);
+      setTranslations(prev => [...prev, {
+        id: crypto.randomUUID(),
+        input: message,
+        output: data.response || data.error || 'Translation failed.',
+      }]);
+    } catch {
+      setTranslations(prev => [...prev, {
+        id: crypto.randomUUID(),
+        input: message,
+        output: 'An error occurred. Please try again.',
+      }]);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    // Cleanup event listener on component unmount
-    return () => {
-      if (messageForm) {
-        messageForm.removeEventListener('submit', handleFormSubmit);
-      }
-    };
-  }, [language]);
+  const currentLang = LANGUAGES.find(l => l.code === language);
 
   return (
     <div className="relative flex flex-col bg-[#2cd0fa]">
-      <div className="absolute inset-0 bg-cover bg-center opacity-50 md:opacity-70"
-        style={{ backgroundImage: 'url(/assets/backgroundimage.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat' }}></div>
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-50 md:opacity-70"
+        style={{ backgroundImage: 'url(/assets/backgroundimage.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat' }}
+      />
 
       <div className="relative flex flex-col min-h-80vh bg-transparent">
         <div className="flex items-center justify-center p-4">
-          <label htmlFor="language-select" className="mr-2 text-white">Translate to:</label>
+          <label htmlFor="language-select" className="mr-2 text-white font-dosis">Translate to:</label>
           <select
             id="language-select"
             className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy bg-white text-navy font-dosis"
             value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+            onChange={(e) => setLanguage(e.target.value as LangCode)}
           >
-            <option value="de">German</option>
-            <option value="fr">French</option>
+            {LANGUAGES.map(lang => (
+              <option key={lang.code} value={lang.code}>{lang.label}</option>
+            ))}
           </select>
         </div>
 
-        <div id="messages-container" className="flex-grow overflow-y-auto p-4">
-          {/* Messages will be appended here */}
+        <div className="flex-grow overflow-y-auto p-4 space-y-4">
+          {translations.map(t => (
+            <div key={t.id} className="space-y-2">
+              <div className="flex justify-end animate-fade-in-bottom">
+                <div className="flex items-start gap-2 max-w-[70%]">
+                  <p className="bg-white text-navy p-2 rounded-2xl font-dosis">{t.input}</p>
+                  <img src="/assets/britishlogo.png" className="w-12 h-12 rounded-full" alt="English" />
+                </div>
+              </div>
+              <div className="flex justify-start animate-fade-in-bottom">
+                <div className="flex items-start gap-2 max-w-[70%]">
+                  <img src="/assets/botlogo.png" className="w-12 h-12 rounded-full" alt={currentLang?.label} />
+                  <p className="bg-white text-navy p-2 rounded-2xl font-dosis">{t.output}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {isLoading && (
+            <div className="flex justify-start animate-fade-in-bottom">
+              <div className="flex items-start gap-2">
+                <img src="/assets/botlogo.png" className="w-12 h-12 rounded-full" alt="Translating" />
+                <div className="bg-white p-3 rounded-2xl">
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
         </div>
-        <form id="message-form" className="flex items-center justify-center p-4 bg-navy rounded-lg shadow-md w-10/12 mx-auto mb-4">
+
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center justify-center p-4 bg-navy rounded-lg shadow-md w-10/12 mx-auto mb-4"
+        >
           <textarea
-            id="message-input"
-            placeholder="Send a message..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(e); } }}
+            placeholder="Type in English..."
             className="flex-grow p-2 mr-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-navy bg-white text-navy font-dosis"
-          ></textarea>
+            rows={1}
+            disabled={isLoading}
+          />
           <button
             type="submit"
-            className="px-4 py-2 bg-[#2cd0fa] text-white rounded-lg hover:bg-[#2cd0fa] focus:outline-none focus:ring-2 focus:ring-[#2cd0fa]"
+            disabled={isLoading || !input.trim()}
+            className="px-4 py-2 bg-[#2cd0fa] text-white rounded-lg hover:bg-[#2cd0fa]/80 focus:outline-none focus:ring-2 focus:ring-[#2cd0fa] disabled:opacity-50 transition-all"
           >
             ➤
           </button>
@@ -147,6 +135,6 @@ const Chatbot: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Chatbot;

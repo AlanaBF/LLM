@@ -8,4 +8,15 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  build: {
+    outDir: '../../backend/static/dist',
+    emptyOutDir: true,
+  },
+  server: {
+    proxy: {
+      '/chatbot': 'http://127.0.0.1:7860',
+      '/conversation': 'http://127.0.0.1:7860',
+      '/speak': 'http://127.0.0.1:7860',
+    },
+  },
 });

@@ -1,26 +1,23 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.11-slim
+# Stage 1: Build the React frontend
+FROM node:20-slim AS frontend-build
+WORKDIR /app/frontend/LeTraducteur
+COPY frontend/LeTraducteur/package*.json ./
+RUN npm ci
+COPY frontend/LeTraducteur/ ./
+RUN npm run build
 
-# Set the working directory in the container
+# Stage 2: Python backend
+FROM python:3.11-slim
 WORKDIR /app
 
-# Copy the requirements file from the backend folder into the container
 COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application code into the container
 COPY backend/ .
+COPY --from=frontend-build /app/backend/static/dist ./static/dist
 
-# Expose the port that the app runs on
-EXPOSE 8000
+EXPOSE 7860
 
-# Define environment variable for Flask
 ENV FLASK_APP=app.py
 
-# Install Gunicorn for serving the app
-RUN pip install gunicorn
-
-# Run the Flask app
-CMD ["sh", "-c", "gunicorn -w 2 -b 0.0.0.0:${PORT:-8000} app:app"]
+CMD ["sh", "-c", "gunicorn -w 2 -b 0.0.0.0:${PORT:-7860} app:app"]
